@@ -13,8 +13,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +32,7 @@ import java.util.Map;
 public class Novel {
     private final String ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
 
+    private static final Logger logger = LoggerFactory.getLogger(Novel.class);
     private List<String> books = new ArrayList<>();
     private Configuration conf = null;
     private File baseDir;
@@ -55,9 +61,11 @@ public class Novel {
     }
 
     private void renderIndex(List<Map<String, Object>> booksModel) {
-        Map<String, Object> model = new HashMap<>();
-        model.put("items", booksModel);
-        write2File("index.ftl", new File(baseDir, "index.html"), model);
+        if (!booksModel.isEmpty()) {
+            Map<String, Object> model = new HashMap<>();
+            model.put("items", booksModel);
+            write2File("index.ftl", new File(baseDir, "index.html"), model);
+        }
     }
 
 
@@ -70,7 +78,7 @@ public class Novel {
         String path = convert2Path(url);
         Document doc = Jsoup.parse(content, url);
         String title = doc.select("#info h1").text();
-        System.out.println("正在抓取:" + title);
+        logger.info("正在抓取:" + title);
         List<Pair<String, String>> menus = new ArrayList<>();
         for (Element e : doc.select("#list dd a")) {
             String etitle = e.text();
@@ -82,7 +90,7 @@ public class Novel {
             if (efile.exists()) {
                 continue;
             }
-            System.out.println("正在抓取:" + etitle);
+            logger.info("正在抓取:" + etitle);
             fetchBookDetail(etitle, e.absUrl("href"), efile, client);
         }
         if (menus.size() > 0) {
@@ -151,7 +159,7 @@ public class Novel {
             temp.process(model, new FileWriter(file));
         } catch (TemplateException | IOException e) {
             // do nothing
-            e.printStackTrace();
+            logger.error("渲染模板出错", e);
         }
     }
 
@@ -163,12 +171,11 @@ public class Novel {
                 String content = IOUtils.toString(resp.body().bytes(), "gbk");
                 resp.body().close();
                 return content;
-            } else {
-                return null;
             }
         } catch (Exception e) {
-            return null;
+            logger.error("抓取页面出错了:{}", url, e);
         }
+        return null;
     }
 
 }

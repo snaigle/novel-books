@@ -1,6 +1,8 @@
 package net.helao.novel.books;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,24 +22,26 @@ import java.util.concurrent.TimeUnit;
  */
 public class Main {
 
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) throws IOException {
 
         String baseDir = System.getProperty("baseDir", "/data/books");
         String urlsFile = System.getProperty("urlsFile", "/data/books.txt");
         while (true) {
             try {
-                System.out.println("开始抓取");
+                logger.info("开始抓取");
                 List<String> urls = FileUtils.readLines(new File(urlsFile));
                 Novel novel = new Novel(urls, baseDir);
                 novel.fetch();
-                System.out.println("抓取完成");
+                logger.info("抓取完成");
                 Thread.sleep(TimeUnit.MINUTES.toMillis(5));
-                System.out.println("睡醒了");
+                logger.info("睡醒了");
             } catch (InterruptedException e) {
-                System.out.println("准备退出");
+                logger.error("准备退出");
                 break;
             } catch (Exception ex) {
-                ex.printStackTrace();
+                logger.error("抓取出错了", ex);
             }
         }
     }
