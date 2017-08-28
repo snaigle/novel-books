@@ -85,13 +85,15 @@ public class Novel {
             String eurl = e.attr("href");
             String epath = convert2Path(eurl);
             File efile = new File(baseDir, epath);
-            Pair<String, String> pair = Pair.of(etitle, epath);
-            menus.add(0, pair);
             if (efile.exists()) {
                 continue;
             }
             logger.info("正在抓取:" + etitle);
-            fetchBookDetail(etitle, e.absUrl("href"), efile, client);
+            boolean fetchResult = fetchBookDetail(etitle, e.absUrl("href"), efile, client);
+            if (fetchResult) {
+                Pair<String, String> pair = Pair.of(etitle, epath);
+                menus.add(0, pair);
+            }
         }
         if (menus.size() > 0) {
             Map<String, Object> model = renderBookIndex(title, path, menus);
@@ -117,7 +119,12 @@ public class Novel {
             return false;
         }
         Document doc = Jsoup.parse(content, url);
-        renderBookDetail(title, doc.select("#content").html(), file);
+        String html = doc.select("#content").html();
+        if (StringUtils.contains(html, "章节内容正在手打中")) {
+            // 没有抓取成功的，就不生成目录了
+            return false;
+        }
+        renderBookDetail(title, html, file);
         return true;
     }
 
