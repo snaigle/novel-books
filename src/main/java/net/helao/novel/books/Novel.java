@@ -78,7 +78,7 @@ public class Novel {
         String path = convert2Path(url);
         Document doc = Jsoup.parse(content, url);
         String title = doc.select("#info h1").text();
-        logger.info("正在抓取:" + title);
+        logger.info("正在抓取:{},{}", title, url);
         List<Pair<String, String>> menus = new ArrayList<>();
         for (Element e : doc.select("#list dd a")) {
             String etitle = e.text();
@@ -86,13 +86,16 @@ public class Novel {
             String epath = convert2Path(eurl);
             File efile = new File(baseDir, epath);
             if (efile.exists()) {
-                continue;
-            }
-            logger.info("正在抓取:" + etitle);
-            boolean fetchResult = fetchBookDetail(etitle, e.absUrl("href"), efile, client);
-            if (fetchResult) {
                 Pair<String, String> pair = Pair.of(etitle, epath);
                 menus.add(0, pair);
+                continue;
+            } else {
+                logger.info("正在抓取:" + etitle);
+                boolean fetchResult = fetchBookDetail(etitle, e.absUrl("href"), efile, client);
+                if (fetchResult) {
+                    Pair<String, String> pair = Pair.of(etitle, epath);
+                    menus.add(0, pair);
+                }
             }
         }
         if (menus.size() > 0) {
