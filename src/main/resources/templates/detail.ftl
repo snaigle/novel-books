@@ -1,13 +1,9 @@
 <html>
     <head>
     <title>${title}</title>
-    <style>
-            body {
-                font-size:3em;
-            }
-        </style>
+    <link rel="stylesheet" type="text/css" href="/main.css">
     </head>
-    <body style="font-size:3em">
+    <body >
         <div>
         ${content}
         </div>

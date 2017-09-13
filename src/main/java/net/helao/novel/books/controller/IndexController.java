@@ -58,8 +58,8 @@ public class IndexController {
                 a.text("下一页");
                 div.appendChild(a);
             }
+            doc.body().insertChildren(0, ImmutableList.of(div.clone()));
             doc.body().appendChild(div);
-            doc.body().insertChildren(0, ImmutableList.of(div));
         }
         return doc.html();
     }

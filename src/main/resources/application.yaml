@@ -4,4 +4,6 @@ base:
 
 spring:
     resources:
-        static-locations: file:/data/books/
+        static-locations:
+          - file:/data/books/
+          - classpath:/static/

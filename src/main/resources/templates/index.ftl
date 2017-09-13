@@ -1,13 +1,9 @@
 <html>
     <head>
     <title>首页</title>
-    <style>
-            body {
-                font-size:3em;
-            }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/main.css">
     </head>
-    <body style="font-size:3em">
+    <body>
         <#list items as book>
             <div>
                 <h3><a href="${book.url}">${book.title}</a></h3>

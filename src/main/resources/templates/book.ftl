@@ -1,8 +1,7 @@
 <html>
     <head>
     <title>${title}</title>
-    <script script src="index.js"></script>
-
+    <link rel="stylesheet" type="text/css" href="/main.css">
     </head>
     <body>
         <ul>
