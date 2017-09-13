@@ -1,6 +1,5 @@
 package net.helao.novel.books;
 
-import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -34,19 +33,18 @@ public class Novel {
 
     private static final Logger logger = LoggerFactory.getLogger(Novel.class);
     private List<String> books = new ArrayList<>();
-    private Configuration conf = null;
+    private Configuration conf;
     private File baseDir;
 
-    public Novel(List<String> books, String baseDirPath) {
+    public Novel(List<String> books, String baseDirPath, Configuration conf) {
         if (books != null) {
             this.books.addAll(books);
         }
-        conf = new Configuration();
-        conf.setTemplateLoader(new ClassTemplateLoader(Main.class, "/"));
         baseDir = new File(baseDirPath);
         if (!baseDir.exists()) {
             baseDir.mkdirs();
         }
+        this.conf = conf;
     }
 
     public void fetch() throws FileNotFoundException {
@@ -150,7 +148,7 @@ public class Novel {
     private <T> List<T> subList(List<T> list, int fromIndex, int length) {
         List<T> subList = new ArrayList<>();
         for (int i = fromIndex; i < (fromIndex + length); i++) {
-            if (fromIndex < list.size()) {
+            if (i < list.size()) {
                 subList.add(list.get(i));
             } else {
                 break;

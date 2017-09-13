@@ -1,0 +1,7 @@
+base:
+    dir: /data/books
+    file: /data/books.txt
+
+spring:
+    resources:
+        static-locations: file:/data/books/

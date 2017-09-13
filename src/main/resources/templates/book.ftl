@@ -1,11 +1,8 @@
 <html>
     <head>
     <title>${title}</title>
-    <style>
-        body {
-            font-size:3em;
-        }
-    </style>
+    <script script src="index.js"></script>
+
     </head>
     <body>
         <ul>
