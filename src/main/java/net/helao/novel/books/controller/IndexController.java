@@ -7,7 +7,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.TextNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +40,8 @@ public class IndexController {
         if (fileNameList != null) {
             List<Integer> idList = Arrays.stream(fileNameList)
                     .mapToInt(name -> NumberUtils.toInt(StringUtils.substringBefore(name, ".html"))).boxed().sorted().collect(Collectors.toList());
+            Element title = new Element("h3");
+            title.text(doc.title());
             int index = idList.indexOf(NumberUtils.toInt(chapterId));
             int prev = index > 0 ? idList.get(index - 1) : -1;
             int last = index < idList.size() - 1 ? idList.get(index + 1) : -1;
@@ -51,22 +52,24 @@ public class IndexController {
                 a.text("上一页");
                 div.appendChild(a);
             }
-            div.appendChild(new TextNode(doc.title(), ""));
+            div.appendChild(new Element("a") {{
+                attr("href", "/");
+                text("首页");
+            }});
+            div.appendChild(new Element("a") {{
+                attr("href", join("/", groupId, "/", bookId, "/index.html"));
+                text("目录");
+            }});
             if (last > 0) {
                 Element a = new Element("a");
                 a.attr("href", join("/", groupId, "/", bookId, "/", last, ".html"));
                 a.text("下一页");
                 div.appendChild(a);
             }
-            doc.body().insertChildren(0, ImmutableList.of(div.clone()));
+            doc.body().insertChildren(0, ImmutableList.of(title));
             doc.body().appendChild(div);
         }
         return doc.html();
-    }
-
-    @GetMapping("/error")
-    public String error() {
-        return "error";
     }
 
     private String renderFile(String path) throws IOException {

@@ -7,3 +7,20 @@ spring:
         static-locations:
           - file:/data/books/
           - classpath:/static/
+
+security:
+    basic:
+        path: /admin/**
+    user:
+        name: admin
+        password: 354888
+
+management:
+    context-path: /admin/monitor
+
+info:
+    app:
+        name: @project.artifactId@
+        version: @project.version@
+
+

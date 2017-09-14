@@ -3,6 +3,8 @@ package net.helao.novel.books;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.IOException;
+
 /**
  * 抓取数据然后生成静态页面，
  * 页面dir
@@ -17,7 +19,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Application {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         SpringApplication.run(Application.class, args);
     }
 }

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,9 @@ public class Novel {
         String title = doc.select("#info h1").text();
         logger.info("正在抓取:{},{}", title, url);
         List<Pair<String, String>> menus = new ArrayList<>();
-        for (Element e : doc.select("#list dd a")) {
+        Elements urls = doc.select("#list dd a");
+        for (int i = 0; i < urls.size(); i++) {
+            Element e = urls.get(i);
             String etitle = e.text();
             String eurl = e.attr("href");
             String epath = convert2Path(eurl);
@@ -89,11 +92,9 @@ public class Novel {
                 continue;
             } else {
                 logger.info("正在抓取:" + etitle);
-                boolean fetchResult = fetchBookDetail(etitle, e.absUrl("href"), efile, client);
-                if (fetchResult) {
-                    Pair<String, String> pair = Pair.of(etitle, epath);
-                    menus.add(0, pair);
-                }
+                fetchBookDetail(i == urls.size() - 1, etitle, e.absUrl("href"), efile, client);
+                Pair<String, String> pair = Pair.of(etitle, epath);
+                menus.add(0, pair);
             }
         }
         if (menus.size() > 0) {
@@ -114,14 +115,15 @@ public class Novel {
         return model;
     }
 
-    public boolean fetchBookDetail(String title, String url, File file, OkHttpClient client) {
+    public boolean fetchBookDetail(boolean isLast, String title, String url, File file, OkHttpClient client) {
         String content = http(url, client);
         if (content == null) {
             return false;
         }
         Document doc = Jsoup.parse(content, url);
         String html = doc.select("#content").html();
-        if (StringUtils.contains(html, "章节内容正在手打中")) {
+        // 只是最后一张重新抓取
+        if (StringUtils.contains(html, "章节内容正在手打中") && isLast) {
             // 没有抓取成功的，就不生成目录了
             return false;
         }
