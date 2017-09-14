@@ -29,7 +29,7 @@ public class NovelTask implements Runnable {
     @Autowired
     private Configuration conf;
 
-    @Scheduled(fixedRate = 5 * 60 * 1000)
+    @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void run() {
         try {
             logger.info("开始抓取");
