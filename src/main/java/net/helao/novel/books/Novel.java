@@ -56,6 +56,13 @@ public class Novel {
                 booksModel.add(book);
             }
         }
+        booksModel.sort((item1, item2) -> {
+            File file1 = new File(((List<Pair<String, String>>) item1.get("items")).get(0).getRight());
+            File file2 = new File(((List<Pair<String, String>>) item2.get("items")).get(0).getRight());
+            long time1 = file1.exists() ? file1.lastModified() : Long.MAX_VALUE;
+            long time2 = file2.exists() ? file2.lastModified() : Long.MAX_VALUE;
+            return Long.compare(time2, time1);
+        });
         renderIndex(booksModel);
     }
 
@@ -77,7 +84,7 @@ public class Novel {
         String path = convert2Path(url);
         Document doc = Jsoup.parse(content, url);
         String title = doc.select("#info h1").text();
-        logger.info("正在抓取:{},{}", title, url);
+        logger.debug("正在抓取:{},{}", title, url);
         List<Pair<String, String>> menus = new ArrayList<>();
         Elements urls = doc.select("#list dd a");
         for (int i = 0; i < urls.size(); i++) {

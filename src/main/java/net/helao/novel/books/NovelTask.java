@@ -32,11 +32,11 @@ public class NovelTask implements Runnable {
     @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void run() {
         try {
-            logger.info("开始抓取");
+            logger.debug("开始抓取");
             List<String> urls = FileUtils.readLines(new File(urlsFile), StandardCharsets.UTF_8);
             Novel novel = new Novel(urls, baseDir, conf);
             novel.fetch();
-            logger.info("抓取完成");
+            logger.debug("抓取完成");
         } catch (Exception ex) {
             logger.error("抓取出错了", ex);
         }
