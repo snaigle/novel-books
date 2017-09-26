@@ -7,6 +7,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,18 @@ public class IndexController {
     public Object chapter(@PathVariable String groupId, @PathVariable String bookId, @PathVariable String chapterId) throws IOException {
         String content = renderFile(join("/", groupId, "/", bookId, "/", chapterId, ".html"));
         Document doc = Jsoup.parse(content);
+        Elements style = doc.head().select("style");
+        if (!style.isEmpty()) {
+            style.remove();
+//            <link rel="stylesheet" type="text/css" href="/main.css">
+            doc.head().appendChild(new Element("link") {{
+                attr("rel", "stylesheet");
+                attr("type", "text/css");
+                attr("href", "/main.css");
+            }});
+        }
+        doc.head().select("meta").remove();
+        doc.body().removeAttr("style");
         String[] fileNameList = new File(baseDir, groupId + "/" + bookId).list((file, name) -> StringUtils.endsWith(name, ".html"));
         if (fileNameList != null) {
             List<Integer> idList = Arrays.stream(fileNameList)
