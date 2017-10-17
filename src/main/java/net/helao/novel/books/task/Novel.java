@@ -1,4 +1,4 @@
-package net.helao.novel.books;
+package net.helao.novel.books.task;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

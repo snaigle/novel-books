@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.4.RELEASE</version>
+        <version>1.5.7.RELEASE</version>
     </parent>
     <groupId>net.helao.novel</groupId>
     <artifactId>books</artifactId>
@@ -42,10 +42,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.springframework.security.oauth</groupId>
             <artifactId>spring-security-oauth2</artifactId>
         </dependency>
+        -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

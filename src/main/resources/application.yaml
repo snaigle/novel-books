@@ -19,11 +19,6 @@ security:
         client:
             clientId: "b4b3af1275d8fc29a021"
             clientSecret: "3858a6db024d71f30802f0034b1d19eaf9db1b87"
-        resource:
-            id: ""
-            token-info-uri: "/oauth/token"
-            token-type: "OAuth2"
-            user-info-uri: ""
 
 management:
     context-path: /admin/monitor
