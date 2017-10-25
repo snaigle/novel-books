@@ -54,6 +54,7 @@ public class Application {
             if (!this.security.isEnableCsrf()) {
                 http.csrf().disable();
             }
+            http.formLogin();
             // No cookies for application endpoints by default
             http.sessionManagement().sessionCreationPolicy(this.security.getSessions());
             SpringBootWebSecurityConfiguration.configureHeaders(http.headers(),
