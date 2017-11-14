@@ -10,7 +10,7 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 
 /**
- * @author wangcheng<wangcheng></wangcheng>@mucang.cn>
+ * @author snail
  * @date 2017/9/26.
  */
 class JsoupTest {
@@ -19,7 +19,7 @@ class JsoupTest {
     @Ignore
     @Throws(IOException::class)
     fun testHead() {
-        val doc = Jsoup.parse(IOUtils.toString(FileInputStream("/Users/tt/Downloads/1234.htm"), StandardCharsets.UTF_8))
+        val doc = Jsoup.parse(IOUtils.toString(FileInputStream(System.getenv("HOME") + "/Downloads/1234.htm"), StandardCharsets.UTF_8))
         val style = doc.head().select("style")
         if (!style.isEmpty()) {
             style.remove()

@@ -10,7 +10,7 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 
 /**
- * @author wangcheng<wangcheng></wangcheng>@mucang.cn>
+ * @author snail
  * @date 2017/8/29.
  */
 @Component

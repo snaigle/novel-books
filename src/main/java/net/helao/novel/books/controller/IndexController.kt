@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets
  * - books/xxxx/index.html 每本书的章节目录
  * - books/xxxx/xxxx.html 每章详情
  *
- * @author wangcheng<wangcheng></wangcheng>@mucang.cn>
+ * @author snail
  * @date 2017/9/12.
  */
 @RestController

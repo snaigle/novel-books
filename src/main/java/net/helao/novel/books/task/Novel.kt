@@ -16,7 +16,7 @@ import java.io.IOException
 import java.util.*
 
 /**
- * @author wangcheng<wangcheng></wangcheng>@mucang.cn>
+ * @author snail
  * @date 2017/3/24.
  */
 class Novel(books: List<String>?, baseDirPath: String, private val conf: Configuration) {
