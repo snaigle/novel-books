@@ -23,12 +23,10 @@ class JsoupTest {
         val style = doc.head().select("style")
         if (!style.isEmpty()) {
             style.remove()
-            doc.head().appendChild(object : Element("link") {
-                init {
-                    attr("rel", "stylesheet")
-                    attr("type", "text/css")
-                    attr("href", "/main.css")
-                }
+            doc.head().appendChild(Element("link").apply {
+                attr("rel", "stylesheet")
+                attr("type", "text/css")
+                attr("href", "/main.css")
             })
         }
         doc.body().removeAttr("style")
