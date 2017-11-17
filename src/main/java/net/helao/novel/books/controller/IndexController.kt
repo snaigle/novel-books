@@ -28,31 +28,34 @@ import java.nio.charset.StandardCharsets
  * @date 2017/9/12.
  */
 @RestController
-class IndexController {
-
-    @Value("\${base.dir}")
-    internal var baseDir: String? = null
+class IndexController constructor(@Value("\${base.dir}") val baseDir: String) {
 
     @GetMapping("/{groupId}/{bookId}/{chapterId:\\d+}.html")
     @Throws(IOException::class)
     fun chapter(@PathVariable groupId: String, @PathVariable bookId: String, @PathVariable chapterId: String): Any {
         val content = renderFile(join("/", groupId, "/", bookId, "/", chapterId, ".html"))
         val doc = Jsoup.parse(content)
-        val styles = doc.head().select("style")
-        if (!styles.isEmpty()) {
-            styles.remove()
-            //            <link rel="stylesheet" type="text/css" href="/main.css">
-            doc.head().appendChild(object : Element("link") {
-                init {
-                    attr("rel", "stylesheet")
-                    attr("type", "text/css")
-                    attr("href", "/main.css")
-                }
-            })
+        doc.head().select("style").let { styles ->
+            if (!styles.isEmpty()) {
+                styles.remove()
+                //            <link rel="stylesheet" type="text/css" href="/main.css">
+                doc.head().appendChild(object : Element("link") {
+                    init {
+                        attr("rel", "stylesheet")
+                        attr("type", "text/css")
+                        attr("href", "/main.css")
+                    }
+                })
+            }
         }
         doc.head().select("meta").remove()
+        doc.head().append("""
+                        <meta charset="utf-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1">
+                    """)
         doc.body().removeAttr("style")
-        val fileNameList = File(baseDir, groupId + "/" + bookId).list { file, name -> StringUtils.endsWith(name, ".html") }
+        doc.body().addClass("is-size-5-mobile")
+        val fileNameList = File(baseDir, groupId + "/" + bookId).list { _, name -> StringUtils.endsWith(name, ".html") }
         if (fileNameList != null) {
             val idList = fileNameList.map { name -> NumberUtils.toInt(StringUtils.substringBefore(name, ".html")) }.sorted()
             val title = Element("h3")
@@ -63,21 +66,30 @@ class IndexController {
             val div = Element("div")
             if (prev > 0) {
                 val a = Element("a").apply {
+                    addClass("button")
+                    addClass("is-primary")
                     attr("href", join("/", groupId, "/", bookId, "/", prev, ".html"))
                     text("上一页")
                 }
                 div.appendChild(a)
             }
             div.appendChild(Element("a").apply {
+                addClass("button")
+                addClass("is-primary")
                 attr("href", "/")
                 text("首页")
             })
             div.appendChild(Element("a").apply {
+                addClass("button")
+                addClass("is-primary")
                 attr("href", join("/", groupId, "/", bookId, "/index.html"))
                 text("目录")
             })
             if (last > 0) {
                 val a = Element("a").apply {
+                    addClass("button")
+                    addClass("is-primary")
+
                     attr("href", join("/", groupId, "/", bookId, "/", last, ".html"))
                     text("下一页")
                 }

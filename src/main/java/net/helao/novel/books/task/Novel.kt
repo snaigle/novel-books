@@ -14,20 +14,19 @@ import java.io.FileNotFoundException
 import java.io.FileWriter
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @author snail
  * @date 2017/3/24.
  */
-class Novel(books: List<String>?, baseDirPath: String, private val conf: Configuration) {
+class Novel(books: List<String>, baseDirPath: String, private val conf: Configuration) {
     private val ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
     private val books = ArrayList<String>()
     private val baseDir: File
 
     init {
-        if (books != null) {
-            this.books.addAll(books)
-        }
+        this.books.addAll(books)
         baseDir = File(baseDirPath)
         if (!baseDir.exists()) {
             baseDir.mkdirs()
@@ -36,32 +35,22 @@ class Novel(books: List<String>?, baseDirPath: String, private val conf: Configu
 
     @Throws(FileNotFoundException::class)
     fun fetch() {
-        val booksModel = ArrayList<Map<String, Any>>()
-        for (bookUrl in books) {
-            val book = fetchBook(bookUrl)
-            if (book != null) {
-                booksModel.add(book)
+        books.map { fetchBook(it) }.filter { it.isNotEmpty() }.sortedByDescending {
+            File(baseDir, (it["items"] as ArrayList<Pair<String, String>>)[0].right).let {
+                if (it.exists()) it.lastModified() else Long.MAX_VALUE
             }
-        }
-        booksModel.sortByDescending {
-            val file = File(baseDir, (it["items"] as List<Pair<String, String>>)[0].right)
-            if (file.exists()) file.lastModified() else java.lang.Long.MAX_VALUE
-        }
-        renderIndex(booksModel)
+        }.let { renderIndex(it) }
     }
 
     private fun renderIndex(booksModel: List<Map<String, Any>>) {
-        if (!booksModel.isEmpty()) {
-            val model = HashMap<String, Any>()
-            model.put("items", booksModel)
-            write2File("index.ftl", File(baseDir, "index.html"), model)
+        if (booksModel.isNotEmpty()) {
+            write2File("index.ftl", File(baseDir, "index.html"), mapOf("items" to booksModel))
         }
     }
 
-
-    fun fetchBook(url: String): Map<String, Any>? {
+    private fun fetchBook(url: String): Map<String, Any> {
         val client = OkHttpClient.Builder().build()
-        val content = http(url, client) ?: return null
+        val content = http(url, client) ?: return emptyMap()
         val path = convert2Path(url)
         val doc = Jsoup.parse(content, url)
         val title = doc.select("#info h1").text()
@@ -85,13 +74,9 @@ class Novel(books: List<String>?, baseDirPath: String, private val conf: Configu
                 menus.add(0, pair)
             }
         }
-        if (menus.size > 0) {
-            val model = renderBookIndex(title, path, menus)
-            model.put("items", subList(menus, 0, 5))
-            return model
-        } else {
-            return null
-        }
+        return if (menus.size > 0) renderBookIndex(title, path, menus).apply {
+            put("items", subList(menus, 0, 5))
+        } else emptyMap()
     }
 
     private fun renderBookIndex(title: String, path: String, menus: List<Pair<String, String>>): MutableMap<String, Any> {
