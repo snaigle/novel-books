@@ -1,16 +1,15 @@
 package net.helao.novel.books.controller
 
-import com.google.common.collect.ImmutableList
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.StringUtils.join
 import org.apache.commons.lang3.math.NumberUtils
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.servlet.ModelAndView
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -27,82 +26,33 @@ import java.nio.charset.StandardCharsets
  * @author snail
  * @date 2017/9/12.
  */
-@RestController
+@Controller
 class IndexController constructor(@Value("\${base.dir}") val baseDir: String) {
 
     @GetMapping("/{groupId}/{bookId}/{chapterId:\\d+}.html")
     @Throws(IOException::class)
     fun chapter(@PathVariable groupId: String, @PathVariable bookId: String, @PathVariable chapterId: String): Any {
-        val content = renderFile(join("/", groupId, "/", bookId, "/", chapterId, ".html"))
+        val content = readFile(join("/", groupId, "/", bookId, "/", chapterId, ".html"))
         val doc = Jsoup.parse(content)
-        doc.head().select("style").let { styles ->
-            if (!styles.isEmpty()) {
-                styles.remove()
-                //            <link rel="stylesheet" type="text/css" href="/main.css">
-                doc.head().appendChild(object : Element("link") {
-                    init {
-                        attr("rel", "stylesheet")
-                        attr("type", "text/css")
-                        attr("href", "/main.css")
-                    }
-                })
-            }
-        }
-        doc.head().select("meta").remove()
-        doc.head().append("""
-                        <meta charset="utf-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1">
-                    """)
-        doc.body().removeAttr("style")
-        doc.body().addClass("is-size-5-mobile")
         val fileNameList = File(baseDir, groupId + "/" + bookId).list { _, name -> StringUtils.endsWith(name, ".html") }
+        val model = hashMapOf<String, Any>()
+        model["title"] = doc.title()
+        model["content"] = doc.body().select("div").first().html()
+        model["groupId"] = groupId
+        model["bookId"] = bookId
+        model["page"] = mapOf("prev" to -1, "last" to -1)
         if (fileNameList != null) {
             val idList = fileNameList.map { name -> NumberUtils.toInt(StringUtils.substringBefore(name, ".html")) }.sorted()
-            val title = Element("h3")
-            title.text(doc.title())
             val index = idList.indexOf(NumberUtils.toInt(chapterId))
             val prev = if (index > 0) idList[index - 1] else -1
             val last = if (index < idList.size - 1) idList[index + 1] else -1
-            val div = Element("div")
-            if (prev > 0) {
-                val a = Element("a").apply {
-                    addClass("button")
-                    addClass("is-primary")
-                    attr("href", join("/", groupId, "/", bookId, "/", prev, ".html"))
-                    text("上一页")
-                }
-                div.appendChild(a)
-            }
-            div.appendChild(Element("a").apply {
-                addClass("button")
-                addClass("is-primary")
-                attr("href", "/")
-                text("首页")
-            })
-            div.appendChild(Element("a").apply {
-                addClass("button")
-                addClass("is-primary")
-                attr("href", join("/", groupId, "/", bookId, "/index.html"))
-                text("目录")
-            })
-            if (last > 0) {
-                val a = Element("a").apply {
-                    addClass("button")
-                    addClass("is-primary")
-
-                    attr("href", join("/", groupId, "/", bookId, "/", last, ".html"))
-                    text("下一页")
-                }
-                div.appendChild(a)
-            }
-            doc.body().insertChildren(0, ImmutableList.of(title))
-            doc.body().appendChild(div)
+            model["page"] = mapOf("prev" to prev, "last" to last)
         }
-        return doc.html()
+        return ModelAndView("detail-front", model)
     }
 
     @Throws(IOException::class)
-    private fun renderFile(path: String): String {
+    private fun readFile(path: String): String {
         val file = File(baseDir, path)
         val input = FileInputStream(file)
         val content = IOUtils.toString(input, StandardCharsets.UTF_8)
