@@ -68,7 +68,7 @@ class Novel(books: List<String>, baseDirPath: String, private val conf: Configur
                 menus.add(0, pair)
                 continue
             } else {
-                logger.debug("正在抓取:" + etitle)
+                logger.info("正在抓取:" + etitle)
                 fetchBookDetail(i == urls.size - 1, etitle, e.absUrl("href"), efile, client)
                 val pair = Pair.of(etitle, epath)
                 menus.add(0, pair)
