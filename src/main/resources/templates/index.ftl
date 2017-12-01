@@ -8,14 +8,13 @@
     <body>
         <#list items as book>
             <div>
-                <h3><a href="${book.url}">${book.title}</a></h3>
+                <h2 class="subtitle"><a href="${book.url}">${book.title}</a></h2>
                 <ul>
                  <#list book.items as it>
                      <li><a href="${it.value}">${it.key}</a></li>
                  </#list>
                 </ul>
             </div>
-
         </#list>
     </body>
 <html>

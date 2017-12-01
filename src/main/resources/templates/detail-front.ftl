@@ -12,12 +12,12 @@
         </div>
         <div>
             <#if page.prev gt 0>
-            <a class="button is-primary" href="/${groupId}/${bookId}/${prev?string["#"]}.html">上一页</a>
+            <a href="/${groupId}/${bookId}/${page.prev?string["#"]}.html">上一页</a>
             </#if>
-            <a class="button is-primary" href="/">首页</a>
-            <a class="button is-primary" href="/${groupId}/${bookId}/">目录</a>
+            <a href="/">首页</a>
+            <a href="/${groupId}/${bookId}/index.html">目录</a>
             <#if page.last gt 0>
-            <a class="button is-primary" href="/${groupId}/${bookId}/${last?string["#"]}.html">下一页</a>
+            <a href="/${groupId}/${bookId}/${page.last?string["#"]}.html">下一页</a>
             </#if>
         </div>
     </body>
