@@ -11,7 +11,7 @@ spring:
 security:
     basic:
         path: /admin/**
-        enabled: false
+        enabled: true
     user:
         name: admin
         password: 354888
