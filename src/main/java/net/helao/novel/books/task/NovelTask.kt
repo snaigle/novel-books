@@ -19,7 +19,9 @@ class NovelTask constructor(@Value("\${base.dir}") private val baseDir: String,
                             @Value("\${base.file}") private val urlsFile: String,
                             private val conf: Configuration) {
 
-    @Scheduled(fixedDelay = (5 * 60 * 1000).toLong())
+    val logger = LoggerFactory.getLogger(NovelTask::class.java)
+
+    @Scheduled(fixedDelay = 5 * 60 * 1000)
     fun run() {
         try {
             logger.info("开始抓取")
@@ -34,8 +36,4 @@ class NovelTask constructor(@Value("\${base.dir}") private val baseDir: String,
         }
     }
 
-    companion object {
-
-        private val logger = LoggerFactory.getLogger(NovelTask::class.java)
-    }
 }
