@@ -1,29 +1,6 @@
-base:
-    dir: /data/books
-    file: /data/books.txt
-
 spring:
     resources:
         static-locations:
           - file:/data/books/
           - classpath:/static/
 
-security:
-    basic:
-        path: /admin/**
-        enabled: true
-    user:
-        name: admin
-        password: 354888
-    oauth2:
-        client:
-            clientId: "b4b3af1275d8fc29a021"
-            clientSecret: "3858a6db024d71f30802f0034b1d19eaf9db1b87"
-
-management:
-    context-path: /admin/monitor
-
-info:
-    app:
-        name: @project.artifactId@
-        version: @project.version@
