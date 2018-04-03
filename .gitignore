@@ -25,6 +25,7 @@ hs_err_pid*
 
 # Maven related
 target/
+.gradle/
 
 # Netbeans related
 nb-configuration.xml

@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController
 class IndexController {
 
     @GetMapping
-    fun index(name: String): String {
-        return "index:index:$name"
+    fun index(): String {
+        return "index:index"
     }
 
     @GetMapping("index1")
@@ -37,13 +37,15 @@ class IndexController {
 
 }
 
+data class Abc(val name: String, val password: String)
+
 @RestController
-@RequestMapping("/index2/")
+@RequestMapping("/admin/index2/")
 class Index2Controller {
 
     @GetMapping
-    fun index(name: String): String {
-        return "index2:index:$name"
+    fun index(name: String): Any {
+        return Abc("你好", "password")
 
     }
 

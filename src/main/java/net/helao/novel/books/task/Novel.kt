@@ -1,7 +1,5 @@
 package net.helao.novel.books.task
 
-import freemarker.template.Configuration
-import freemarker.template.TemplateException
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.apache.commons.io.IOUtils
@@ -11,8 +9,6 @@ import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.FileWriter
-import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -20,7 +16,7 @@ import kotlin.collections.ArrayList
  * @author snail
  * @date 2017/3/24.
  */
-class Novel(books: List<String>, baseDirPath: String, private val conf: Configuration) {
+class Novel(books: List<String>, baseDirPath: String) {
     private val ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
     private val books = ArrayList<String>()
     private val baseDir: File
@@ -135,16 +131,7 @@ class Novel(books: List<String>, baseDirPath: String, private val conf: Configur
         if (!file.parentFile.exists()) {
             file.parentFile.mkdirs()
         }
-        try {
-            val temp = conf.getTemplate(tpl)
-            temp.process(model, FileWriter(file))
-        } catch (e: TemplateException) {
-            // do nothing
-            logger.error("渲染模板出错", e)
-        } catch (e: IOException) {
-            logger.error("渲染模板出错", e)
-        }
-
+        // todo render
     }
 
 
