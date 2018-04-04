@@ -2,12 +2,17 @@ package net.helao.novel.books
 
 import org.springframework.boot.Banner
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.runApplication
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RestController
 
 /**
  * @author snail
@@ -26,6 +31,35 @@ class Application {
                 .build())
         return manager
     }
+    @Bean
+    fun bean3(): Bean33 {
+        return Bean33()
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(Bean33::class)
+    fun bean1(): Bean33 {
+        return Bean33()
+    }
+
+    @Bean
+    @ConditionalOnBean(Bean33::class)
+    fun bean2(): Bean44 {
+        return Bean44()
+    }
+
+    class Bean33
+    class Bean44
+}
+
+@RestController
+class MyController(val ctx: ApplicationContext) {
+
+    @GetMapping("/abc")
+    fun abc() {
+        println(ctx.getBeansOfType(Application.Bean33::class.java))
+        println(ctx.getBeansOfType(Application.Bean44::class.java))
+    }
 }
 
 fun main(args: Array<String>) {
@@ -33,3 +67,4 @@ fun main(args: Array<String>) {
         setBannerMode(Banner.Mode.OFF)
     }
 }
+

@@ -53,5 +53,4 @@ class Index2Controller {
     fun index2(name: String): String {
         return "index2:index2:$name"
     }
-
 }

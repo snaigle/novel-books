@@ -15,7 +15,7 @@ buildscript {
 
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-spring'
-apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
@@ -35,12 +35,18 @@ compileTestKotlin {
     }
 }
 
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
 repositories {
-    mavenLocal()
+//    mavenLocal()
     maven {
         url "http://maven.aliyun.com/nexus/content/groups/public/"
     }
-    mavenCentral()
 }
 
 dependencies {
