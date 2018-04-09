@@ -3,8 +3,6 @@ package net.helao.novel.books.task
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.tuple.Pair
 import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -32,7 +30,7 @@ class Novel(books: List<String>, baseDirPath: String) {
     @Throws(FileNotFoundException::class)
     fun fetch() {
         books.map { fetchBook(it) }.filter { it.isNotEmpty() }.sortedByDescending {
-            File(baseDir, (it["items"] as ArrayList<Pair<String, String>>)[0].right).let {
+            File(baseDir, (it["items"] as ArrayList<Pair<String, String>>)[0].first).let {
                 if (it.exists()) it.lastModified() else Long.MAX_VALUE
             }
         }.let { renderIndex(it) }
@@ -60,13 +58,13 @@ class Novel(books: List<String>, baseDirPath: String) {
             val epath = convert2Path(eurl)
             val efile = File(baseDir, epath)
             if (efile.exists()) {
-                val pair = Pair.of(etitle, epath)
+                val pair = Pair(etitle, epath)
                 menus.add(0, pair)
                 continue
             } else {
-                logger.info("正在抓取:" + etitle)
+                logger.info("正在抓取:$etitle")
                 fetchBookDetail(i == urls.size - 1, etitle, e.absUrl("href"), efile, client)
-                val pair = Pair.of(etitle, epath)
+                val pair = Pair(etitle, epath)
                 menus.add(0, pair)
             }
         }
@@ -84,12 +82,12 @@ class Novel(books: List<String>, baseDirPath: String) {
         return model
     }
 
-    fun fetchBookDetail(isLast: Boolean, title: String, url: String, file: File, client: OkHttpClient): Boolean {
+    private fun fetchBookDetail(isLast: Boolean, title: String, url: String, file: File, client: OkHttpClient): Boolean {
         val content = http(url, client) ?: return false
         val doc = Jsoup.parse(content, url)
         val html = doc.select("#content").html()
         // 只是最后一张重新抓取
-        if (StringUtils.contains(html, "章节内容正在手打中") && isLast) {
+        if (html.contains("章节内容正在手打中") && isLast) {
             // 没有抓取成功的，就不生成目录了
             return false
         }
@@ -107,8 +105,8 @@ class Novel(books: List<String>, baseDirPath: String) {
 
 
     private fun convert2Path(url: String): String {
-        var path = StringUtils.substringAfter(url, "/html")
-        if (StringUtils.endsWith(path, "/")) {
+        var path = url.substringAfter("/html")
+        if (path.endsWith("/")) {
             path += "index.html"
         }
         return path

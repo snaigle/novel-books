@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
@@ -31,6 +34,7 @@ class Application {
                 .build())
         return manager
     }
+
     @Bean
     fun bean3(): Bean33 {
         return Bean33()
@@ -60,6 +64,20 @@ class MyController(val ctx: ApplicationContext) {
         println(ctx.getBeansOfType(Application.Bean33::class.java))
         println(ctx.getBeansOfType(Application.Bean44::class.java))
     }
+}
+
+@Configuration
+class MySecurityAdapter : WebSecurityConfigurerAdapter() {
+
+    override fun configure(http: HttpSecurity?) {
+        http!!.authorizeRequests()
+                .antMatchers("/admin/**").authenticated()
+                .anyRequest().permitAll()
+                .and().formLogin()
+                .and().cors()
+                .and().oauth2Login()
+    }
+
 }
 
 fun main(args: Array<String>) {

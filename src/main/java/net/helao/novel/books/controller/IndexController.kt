@@ -3,6 +3,8 @@ package net.helao.novel.books.controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.context.request.WebRequest
+import javax.servlet.http.HttpServletRequest
 
 /**
  * 抓取数据然后生成静态页面，
@@ -20,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController
 class IndexController {
 
     @GetMapping
-    fun index(): String {
-        return "index:index"
+    fun index(req: WebRequest, req2: HttpServletRequest): String {
+        return "index:index:${req.isSecure},${req2.scheme}"
     }
 
     @GetMapping("index1")

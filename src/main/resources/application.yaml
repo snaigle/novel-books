@@ -1,1 +1,10 @@
-
+server:
+  use-forward-headers: true
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: a3f78bd9595040bc5b64
+            clientSecret: 5a53af3e15857cbbe0acef035c0b09a3b4db15ca

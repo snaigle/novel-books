@@ -1,7 +1,8 @@
 buildscript {
     ext {
+        javaVersion = '1.8'
         kotlinVersion = '1.2.31'
-        springBootVersion = '2.0.0.RELEASE'
+        springBootVersion = '2.0.1.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -19,26 +20,26 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-group = 'com.example'
+group = 'net.helao.novels'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
+sourceCompatibility = javaVersion
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "1.8"
+        jvmTarget = javaVersion
     }
 }
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "1.8"
+        jvmTarget = javaVersion
     }
 }
 
 idea {
     module {
         downloadSources = true
-        downloadJavadoc = true
+        downloadJavadoc = false
     }
 }
 
@@ -50,9 +51,7 @@ repositories {
 }
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web') {
-        exclude module: 'spring-boot-starter-json'
-    }
+    compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.security:spring-security-oauth2-client')
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
