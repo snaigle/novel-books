@@ -5,7 +5,9 @@ buildscript {
         springBootVersion = '2.0.1.RELEASE'
     }
     repositories {
-        mavenCentral()
+        maven {
+            url "http://maven.aliyun.com/nexus/content/groups/public/"
+        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -20,9 +22,7 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-group = 'net.helao.novels'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = javaVersion
+
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
@@ -63,3 +63,7 @@ dependencies {
     compile 'com.google.guava:guava:21.0'
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+group = 'net.helao.novels'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = javaVersion

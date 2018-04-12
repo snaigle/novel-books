@@ -73,7 +73,8 @@ class MySecurityAdapter : WebSecurityConfigurerAdapter() {
         http!!.authorizeRequests()
                 .antMatchers("/admin/**").authenticated()
                 .anyRequest().permitAll()
-                .and().formLogin()
+                .and().formLogin().loginPage("/login")
+                .loginProcessingUrl("/login")
                 .and().cors()
                 .and().oauth2Login()
     }
