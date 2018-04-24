@@ -1,7 +1,7 @@
 buildscript {
     ext {
         javaVersion = '1.8'
-        kotlinVersion = '1.2.31'
+        kotlinVersion = '1.2.40'
         springBootVersion = '2.0.1.RELEASE'
     }
     repositories {
@@ -44,7 +44,6 @@ idea {
 }
 
 repositories {
-//    mavenLocal()
     maven {
         url "http://maven.aliyun.com/nexus/content/groups/public/"
     }
